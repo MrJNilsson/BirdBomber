@@ -230,7 +230,7 @@ namespace BirdBomber
             spriteBatch.DrawString(Font, "Points: " + Points, new Vector2(700, 20), Color.White);
             if (Life == 0)
             {
-                spriteBatch.DrawString(Font, "GAME OVER", new Vector2(350, 250), Color.White);
+                spriteBatch.DrawString(Font, "GAME OVER - PRESS ENTER TO RESTART", new Vector2(350, 250), Color.White);
             }
             spriteBatch.End();
 
