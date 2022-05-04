@@ -14,6 +14,28 @@ namespace BirdBomber.Lib
 
         public override void Update(GameTime gameTime)
         {
+            CheckKeyPress();
+            base.Update(gameTime);
+        }
+        private void CheckKeyPress()
+        {
+            KeyboardState ks = Keyboard.GetState();
+            if (ks.IsKeyDown(Keys.Left))
+            {
+                Position.X -= Speed;
+            }
+            if (ks.IsKeyDown(Keys.Right))
+            {
+                Position.X += Speed;
+            }
+            if (ks.IsKeyDown(Keys.Down))
+            {
+                Position.Y += Speed;
+            }
+            if (ks.IsKeyDown(Keys.Up))
+            {
+                Position.Y -= Speed;
+            }
             if (Position.X < -40)
             {
                 Position.X = game.GraphicsDevice.Viewport.Width + 40;
@@ -22,8 +44,6 @@ namespace BirdBomber.Lib
             {
                 Position.X = -40;
             }
-            base.Update(gameTime);
         }
-
     }
 }
