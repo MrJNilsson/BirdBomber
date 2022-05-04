@@ -69,7 +69,6 @@ namespace BirdBomber
 
         protected override void LoadContent()
         {
-
             spriteBatch = new SpriteBatch(GraphicsDevice);
             Background = Content.Load<Texture2D>("bgspace");
             laserSound = Content.Load<SoundEffect>("laserSound");
@@ -80,16 +79,19 @@ namespace BirdBomber
 
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
+            //Här uppdaterar vi all logic, skapar objekt, kontrollerar kollissioner mm - ingenting ritas upp
+            //utan vi sätter bara förutsättningarna här
 
-            
-            // TODO: Add your update logic here
+            //Avslutar spelet om vi klickar Esc
+            if (Keyboard.GetState().IsKeyDown(Keys.Escape))  Exit();
+
+            //Lyssnar av tangentbordet
             KeyboardState ks = Keyboard.GetState();
 
-
+            //Om spelet är igång
             if (ActiveState == GameState.InGame)
             {
+                fighter.Update(gameTime);
 
                 // Skapa Ufo
                 Ufo_time -= gameTime.ElapsedGameTime.Milliseconds;
@@ -103,13 +105,12 @@ namespace BirdBomber
                 {
                     ufo.Update(gameTime);
                 }
-                //Skotten
+                //Skapa skotten och uppdatera samt radera gamla
                 Shot_time -= gameTime.ElapsedGameTime.Milliseconds; // Tiden för en loop
                 if (Shot_time < 0)
                 {
                     Shot_time = 0;
                 }
-
                 if (ks.IsKeyDown(Keys.Space) && Shot_time == 0 )
                 {
                     laserSound.Play(0.7f, 0f, 0f);
@@ -119,11 +120,10 @@ namespace BirdBomber
                         Position = new Vector2(fighter.Position.X + 20, fighter.Position.Y)
                     });
                 }
-                fighter.Update(gameTime);
                 shots.ForEach(e => e.Update(gameTime));
                 shots.RemoveAll(e => !e.IsActive);
 
-                //Bomber
+                //Bomber, skapa, uppdatera positioner samt radera gamla
                 Bomb_time -= gameTime.ElapsedGameTime.Milliseconds;
                 if (Bomb_time < 0)
                 {
@@ -131,7 +131,6 @@ namespace BirdBomber
                 }
                 if (Bomb_time == 0 && Life > 0)
                 {
-
                     Bomb_time = Bomb_delay;
                     //Slumpa x position.
                     int x = r.Next(0, graphics.GraphicsDevice.Viewport.Width - 40);
@@ -139,40 +138,44 @@ namespace BirdBomber
                     {
                         Position = new Vector2(x, -50)
                     });
-
                 }
                 bombs.ForEach(e => e.Update(gameTime));
                 bombs.RemoveAll(e => e.IsActive == false);
 
+                //Uppdatera gamla explisioner och radera gamla
                 explosions.ForEach(e => e.Update(gameTime));
                 explosions.RemoveAll(e => e.IsActive == false);
 
+                //För varje bomb i bomlistan
                 foreach (Bomb b in bombs)
                 {
+                    //Kolla om den kolliderar med fightern
                     if (b.Rectangle.Intersects(fighter.Rectangle))
                     {
-                        //Om en bomb krockar med rymdskeppet
+                        //Om en bomb krockar med rymdskeppet - skapa ny explosion på detta stället
                         explosions.Add(new Explosion(this)
                         {
                             Position = fighter.Position
                         });
-                        explosionSound.Play(0.05f, 0f, 0f);
-                        if (Life > 0) Life -= 1;
-                        b.IsActive = false;
-                        Shot_delay = 300; //Återställer skjuthastigheten
+                        explosionSound.Play(0.05f, 0f, 0f); //Spela upp ljud av explossion
+                        if (Life > 0) Life -= 1; //Minska livet
+                        b.IsActive = false; //Inaktivera bomben
+                        Shot_delay = 300; //Återställer skjuthastigheten om man har fått snabbare tidigare
                     }
                     foreach (Shot s in shots)
                     {
+                        //För varje bomb kollar vi även om något skott kolliderar med en bomb
+                        //Om bomben b - kolliderar med skottet s
                         if (b.Rectangle.Intersects(s.Rectangle))
                         {
                             explosions.Add(new Explosion(this)
                             {
                                 Position = b.Position
                             });
-                            Points += 1;
+                            Points += 1; //Här får vi ju poäng :) 
                             explosionSound.Play(0.05f, 0f, 0f);
-                            b.IsActive = false;
-                            s.IsActive = false;
+                            b.IsActive = false; //Bomben ska inaktiveras
+                            s.IsActive = false; //Skottet ska inaktiveras - kommer att raderas sen
                         }
                     }
                 }
@@ -187,13 +190,18 @@ namespace BirdBomber
                             {
                                 Position = ufo.Position
                             });
-                            Points += 100;
+                            Points += 100; //Poäng!!!!
                             explosionSound.Play(0.05f, 0f, 0f);
                             ufo.IsActive = false;
                             s.IsActive = false;
                             Shot_delay = 150; //Lite bonus vid träff - skjuta oftare
                         }
                     }
+                }
+                if (Life == 0)
+                {
+                    //Om liven tagit slut
+                    ActiveState = GameState.Paus;
                 }
             }
             else if (ActiveState == GameState.Paus)
@@ -254,11 +262,7 @@ namespace BirdBomber
                 }
                 spriteBatch.DrawString(Font, "Skott: " + shots.Count, new Vector2(30, 20), Color.White);
                 spriteBatch.DrawString(Font, "Bomber: " + bombs.Count, new Vector2(100, 20), Color.White);
-                if (Life == 0)
-                {
-                    //Om liven tagit slut
-                    ActiveState = GameState.Paus;
-                }
+
             }
             //Skriver ut lite info
             spriteBatch.DrawString(Font, "Liv: " + Life, new Vector2(650, 20), Color.White);

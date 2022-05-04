@@ -28,11 +28,11 @@ namespace BirdBomber.Lib
             {
                 Position.X += Speed;
             }
-            if (ks.IsKeyDown(Keys.Down))
+            if (ks.IsKeyDown(Keys.Down) && Position.Y<500)
             {
                 Position.Y += Speed;
             }
-            if (ks.IsKeyDown(Keys.Up))
+            if (ks.IsKeyDown(Keys.Up) && Position.Y>0)
             {
                 Position.Y -= Speed;
             }
