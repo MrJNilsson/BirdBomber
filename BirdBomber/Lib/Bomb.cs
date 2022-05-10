@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 
 namespace BirdBomber.Lib
 {
@@ -7,8 +8,18 @@ namespace BirdBomber.Lib
     {
         public Bomb(Game game) : base(game)
         {
-            Speed = 5;
-            Texture = game.Content.Load<Texture2D>("bomb");
+            Random rnd = new Random();
+
+            Speed = rnd.Next(3, 10);
+            if (Speed < 6)
+            {
+                Texture = game.Content.Load<Texture2D>("bomb");
+            }
+            else
+            {
+                Texture = game.Content.Load<Texture2D>("rocket2");
+            }
+            
         }
         public override void Update(GameTime gameTime)
         {

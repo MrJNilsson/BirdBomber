@@ -13,7 +13,7 @@ namespace BirdBomber.Lib
         public SoundEffect Sound { get; set; }
         public Vector2 Position;
         public virtual Color Color { get; set; } = Color.White;
-        public float Speed { get; set; }
+        public int Speed { get; set; }
         public bool IsActive { get; set; } = true;
 
         public Sprite(Game _game) { game = _game; }

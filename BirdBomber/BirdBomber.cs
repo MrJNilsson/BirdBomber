@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace BirdBomber
 {
-    public enum GameState { Paus, InGame, error}
+    public enum GameState { Paus, InGame, Error}
     public class BirdBomber : Game
     {
         
@@ -28,6 +28,7 @@ namespace BirdBomber
         Ufo ufo { get; set; }
 
         Texture2D Background;
+        Texture2D BackgroundEnd;
 
         //Hur ofta man får skjuta - tiden mellan skotten
         int Shot_delay = 300;
@@ -71,6 +72,8 @@ namespace BirdBomber
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
             Background = Content.Load<Texture2D>("bgspace");
+            BackgroundEnd = Content.Load<Texture2D>("bgdeath");
+
             laserSound = Content.Load<SoundEffect>("laserSound");
             explosionSound = Content.Load<SoundEffect>("explosionSound");
             Font = Content.Load<SpriteFont>("Text");
@@ -172,7 +175,7 @@ namespace BirdBomber
                             {
                                 Position = b.Position
                             });
-                            Points += 1; //Här får vi ju poäng :) 
+                            Points += 1*b.Speed; //Här får vi ju poäng :) 
                             explosionSound.Play(0.05f, 0f, 0f);
                             b.IsActive = false; //Bomben ska inaktiveras
                             s.IsActive = false; //Skottet ska inaktiveras - kommer att raderas sen
@@ -211,6 +214,7 @@ namespace BirdBomber
                 {
                     Life = 3; Points = 0;
                     ActiveState = GameState.InGame;
+                    //Vi behöver ju även göra en reset på alla bomber och var fightern är när vi startar om
                 }
             }
             else { }
@@ -224,6 +228,7 @@ namespace BirdBomber
             spriteBatch.Begin();
             if (ActiveState == GameState.Paus)
             {
+                spriteBatch.Draw(BackgroundEnd, new Vector2(0, 0), Color.White);
                 //Om spelet inte är aktivt
                 if (Life > 0)
                 {
