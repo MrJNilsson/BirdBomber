@@ -24,6 +24,8 @@
     <MonoGameContentReference Include="Content\Content.mgcb" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="bin\Debug\net5.0\Content\bgdeath.xnb" />
+    <None Include="bin\Debug\net5.0\Content\rocket2.xnb" />
     <None Include="bin\Release\net5.0\Content\bgdeath.xnb" />
     <None Include="bin\Release\net5.0\Content\rocket2.xnb" />
   </ItemGroup>

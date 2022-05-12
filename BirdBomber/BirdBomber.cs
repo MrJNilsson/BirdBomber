@@ -5,13 +5,19 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 
 namespace BirdBomber
 {
-    public enum GameState { Paus, InGame, Error}
+    public enum GameState { 
+        Paus, 
+        InGame, 
+        Error
+    }
     public class BirdBomber : Game
     {
-        
+        private string test = "";
         private GameState ActiveState= GameState.Paus;
 
         private GraphicsDeviceManager graphics;
@@ -125,7 +131,12 @@ namespace BirdBomber
                 }
                 shots.ForEach(e => e.Update(gameTime));
                 shots.RemoveAll(e => !e.IsActive);
-
+                if (ks.GetPressedKeys().Length > 0)
+                {
+                    Debug.WriteLine(ks.IsKeyUp(ks.GetPressedKeys()[0]).ToString());
+                }
+                
+                //Debug.WriteLine("hej+" + gameTime);
                 //Bomber, skapa, uppdatera positioner samt radera gamla
                 Bomb_time -= gameTime.ElapsedGameTime.Milliseconds;
                 if (Bomb_time < 0)
